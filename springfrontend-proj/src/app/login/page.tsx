@@ -2,11 +2,14 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
+import RegisterModal from '@/components/RegisterModal';
 
 const LoginPage = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>(''); // State for error message
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState<boolean>(false);
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -41,15 +44,26 @@ const LoginPage = () => {
     }
   };
 
+  const openRegisterModal = () => {
+    setIsRegisterModalOpen(true);
+  };
+
+  const closeRegisterModal = () => {
+    setIsRegisterModalOpen(false);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
         <p className="mt-2 text-center text-sm text-gray-600">
           Or{' '}
-          <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
+          <button
+            onClick={openRegisterModal}
+            className="font-medium text-indigo-600 hover:text-indigo-500"
+          >
             create a new account
-          </a>
+          </button>
         </p>
       </div>
 
@@ -104,6 +118,7 @@ const LoginPage = () => {
           </form>
         </div>
       </div>
+      <RegisterModal isOpen={isRegisterModalOpen} onClose={closeRegisterModal} isAdmin={false} />
     </div>
   );
 };

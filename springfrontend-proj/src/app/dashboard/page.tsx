@@ -6,7 +6,7 @@ import axios, { AxiosError } from 'axios';
 import { request } from 'http';
 import UserTable from '@/components/UserTable';
 import ChangePasswordModal from '@/components/ChangePasswordModal';
-
+import RegisterModal from '@/components/RegisterModal';
 
 const DashboardPage = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -14,12 +14,12 @@ const DashboardPage = () => {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true); // Loading state
   const [users, setUsers] = useState<any[]>([]); // State
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // Modal state
+  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState<boolean>(false); // Change Password Modal state
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState<boolean>(false); // Register Modal state
 
   useEffect(() => {
     const token = localStorage.getItem('token');
 
-    
     if (!token) {
       router.push('/login'); // Redirect to login page if token is not present
     } else {
@@ -32,48 +32,55 @@ const DashboardPage = () => {
       };
 
       const fetchData = async () => {
-        try{
-            // Make GET request to fetch user data
-            const response = await axios.get('http://localhost:8080/api/v1/users', config);
-            if (response.status === 200) {
-                setIsAdmin(true); // User is admin
-                setUsers(response.data);
-              } else {
-                setIsAdmin(false); // Assume user is not admin for any other status
-              }
+        try {
+          // Make GET request to fetch user data
+          const response = await axios.get('http://localhost:8080/api/v1/users', config);
+          if (response.status === 200) {
+            setIsAdmin(true); // User is admin
+            setUsers(response.data);
+          } else {
+            setIsAdmin(false); // Assume user is not admin for any other status
+          }
         } catch (error) {
-            const axiosError = error as AxiosError;
-            if (axiosError.response) {
-                if (axiosError.response.status === 403) {
-                    setIsAdmin(false); // User is not admin (403 Forbidden)
-                } else {
-                    console.error('Error fetching user data:', axiosError,request);
-                }
-            } else if (axiosError.request) {
-                console.error('Request error:', axiosError.request);
+          const axiosError = error as AxiosError;
+          if (axiosError.response) {
+            if (axiosError.response.status === 403) {
+              setIsAdmin(false); // User is not admin (403 Forbidden)
             } else {
-                console.error('Error:', axiosError.message);
+              console.error('Error fetching user data:', axiosError, request);
             }
+          } else if (axiosError.request) {
+            console.error('Request error:', axiosError.request);
+          } else {
+            console.error('Error:', axiosError.message);
+          }
         } finally {
-            setLoading(false); // Set loading state to false after fetching data
+          setLoading(false); // Set loading state to false after fetching data
         }
       };
       fetchData();
     }
   }, [router]);
-  
 
   if (!isAuthenticated) {
     // Return null or a loading indicator if not authenticated (optional)
     return null;
   }
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
+  const handleOpenChangePasswordModal = () => {
+    setIsChangePasswordModalOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  const handleCloseChangePasswordModal = () => {
+    setIsChangePasswordModalOpen(false);
+  };
+
+  const handleOpenRegisterModal = () => {
+    setIsRegisterModalOpen(true);
+  };
+
+  const handleCloseRegisterModal = () => {
+    setIsRegisterModalOpen(false);
   };
 
   const handleLogout = () => {
@@ -94,37 +101,39 @@ const DashboardPage = () => {
           </p>
           {loading ? (
             <p className="mt-4 text-gray-500">Loading...</p>
-          ) : isAdmin ? (
-            <>
-              <p className="mt-4 text-green-600">You are an admin!</p>
-              <UserTable users={users} /> 
-              <div className="mt-4 flex space-x-4">
-                <button
-                    onClick={handleOpenModal}
-                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                >
-                    Change Password
-                </button>
-                <button
-                  onClick={handleLogout}
-                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-                >
-                  Logout
-                </button>
-              </div>
-              <ChangePasswordModal
-                isOpen={isModalOpen}
-                onClose={handleCloseModal}
-              />
-            </>
           ) : (
-            <p className="mt-4 text-red-600">You are not authorized as admin.</p>
+            <>
+              {isAdmin && (
+                <div className="mt-6 flex space-x-4">
+                  <button
+                    onClick={handleOpenChangePasswordModal}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                  >
+                    Change Password
+                  </button>
+                  <button
+                    onClick={handleOpenRegisterModal}
+                    className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                  >
+                    Register Admin
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </>
           )}
+          <ChangePasswordModal isOpen={isChangePasswordModalOpen} onClose={handleCloseChangePasswordModal} />
+          <RegisterModal isOpen={isRegisterModalOpen} onClose={handleCloseRegisterModal} isAdmin={true} />
         </div>
+        {isAdmin && <UserTable users={users} />} {/* Display the UserTable only if the user is an admin */}
       </div>
     </div>
   );
 };
 
 export default DashboardPage;
-
