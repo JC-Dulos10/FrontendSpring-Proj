@@ -89,6 +89,21 @@ const DashboardPage = () => {
     router.push('/login');
   };
 
+  const handleDeleteUser = async (id: number) => {
+    try {
+      const token = localStorage.getItem('token');
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      await axios.delete(`http://localhost:8080/api/v1/users/${id}`, config);
+      setUsers(users.filter(user => user.id !== id)); // Remove deleted user from state
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 py-6 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -123,14 +138,37 @@ const DashboardPage = () => {
                   >
                     Logout
                   </button>
+                  <a href='/dashboard'>
+                    <button
+                      className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700"
+                    >
+                      Refresh
+                    </button>
+                  </a>
                 </div>
               )}
             </>
           )}
+          {!isAdmin && (
+            <div className="mt-6 flex space-x-4">
+             <button
+                    onClick={handleOpenChangePasswordModal}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                  >
+                    Change Password
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                  >
+                    Logout
+                  </button>
+              </div>
+          )}
           <ChangePasswordModal isOpen={isChangePasswordModalOpen} onClose={handleCloseChangePasswordModal} />
           <RegisterModal isOpen={isRegisterModalOpen} onClose={handleCloseRegisterModal} isAdmin={true} />
         </div>
-        {isAdmin && <UserTable users={users} />} {/* Display the UserTable only if the user is an admin */}
+        {isAdmin && <UserTable users={users} onDelete={handleDeleteUser} />} {/* Display the UserTable only if the user is an admin */}
       </div>
     </div>
   );

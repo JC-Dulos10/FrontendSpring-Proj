@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios, { AxiosError } from 'axios';
 
 interface Props {
   isOpen: boolean;
@@ -16,48 +15,50 @@ const RegisterModal: React.FC<Props> = ({ isOpen, onClose, isAdmin }) => {
   const [success, setSuccess] = useState('');
 
   const handleRegister = async () => {
-    try {
-      const response = await axios.post('http://localhost:8080/api/v1/auth/register', {
-        firstname,
-        lastname,
-        email,
-        password,
-        isAdmin: isAdmin ? "true" : "false"
-      });
+      try {
+        const res = await fetch('http://localhost:8080/api/v1/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            firstname,
+            lastname,
+            email,
+            password,            
+            isAdmin: isAdmin ? "true" : "false"
+          }),
+        });
   
-      if (response.status === 201) {
-        setSuccess('User registered successfully');
-        setFirstname('');
-        setLastname('');
-        setEmail('');
-        setPassword('');
-        setError(''); // Clear the error state
-        setTimeout(() => {
-          onClose();
-          setSuccess(''); // Clear success message after some time
-        }, 2000);
-      } else {
-        setError('Failed to register user');
-      }
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      if (axiosError.response) {
-        const contentType = axiosError.response.headers['content-type'];
-        if (contentType && contentType.includes('application/json')) {
-          // Type casting
-          const responseData = axiosError.response.data as { message?: string };
-          setError(responseData.message || 'Error registering user');
+        if (res.ok) {
+          setSuccess('User registered successfully');
+          setFirstname('');
+          setLastname('');
+          setEmail('');
+          setPassword('');
+          setError(''); // Clear the error state
+          setTimeout(() => {
+            onClose();
+            setSuccess(''); // Clear success message after some time
+          }, 2000);
         } else {
-          setError(axiosError.response.data as string || 'Error registering user');
+          // Handle error response (text or JSON)
+          const contentType = res.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            // If response is JSON
+            const jsonError = await res.json();
+            setError(jsonError.message || 'Failed to register user');
+          } else {
+            // If response is plain text
+            const textError = await res.text();
+            setError(textError || 'Failed to register user');
+          }
         }
-      } else if (axiosError.request) {
-        setError('Request error');
-      } else {
-        setError(axiosError.message);
+      } catch (error) {
+        setError('Error registering user');
+        setSuccess(''); // Clear success message if there's an error
       }
-      // Clear success message if there's an error
-    }
-  };
+    };
   
 
   if (!isOpen) {
