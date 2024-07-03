@@ -10,9 +10,10 @@ interface User {
 
 interface Props {
   users: User[];
+  onDelete: (id: number) => void; // Function to handle delete action
 }
 
-const UserTable: React.FC<Props> = ({ users }) => {
+const UserTable: React.FC<Props> = ({ users, onDelete }) => {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white border-gray-200 divide-y divide-gray-200">
@@ -33,6 +34,9 @@ const UserTable: React.FC<Props> = ({ users }) => {
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Role
             </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
@@ -52,6 +56,14 @@ const UserTable: React.FC<Props> = ({ users }) => {
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {user.role}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <button
+                  onClick={() => onDelete(user.id)}
+                  className="px-2 py-1 bg-red-600 text-white rounded-md hover:bg-red-700"
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}
