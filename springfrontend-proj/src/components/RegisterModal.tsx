@@ -16,7 +16,7 @@ const RegisterModal: React.FC<Props> = ({ isOpen, onClose, isAdmin }) => {
 
   const handleRegister = async () => {
       try {
-        const res = await fetch('http://localhost:8080/api/v1/auth/register', {
+        const res = await fetch(`${process.env.registerURL}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

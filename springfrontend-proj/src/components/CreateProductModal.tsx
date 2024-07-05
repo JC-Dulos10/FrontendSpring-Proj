@@ -27,7 +27,7 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ isOpen, onCreat
     const token = localStorage.getItem('token');
 
     try {
-      const response = await fetch ('http://localhost:8080/api/v1/products', {
+      const response = await fetch (`${process.env.productURL}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

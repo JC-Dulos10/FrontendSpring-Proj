@@ -32,7 +32,7 @@ const ChangePasswordModal: React.FC<Props> = ({ isOpen, onClose }) => {
         },
       };
 
-      const response = await axios.patch('http://localhost:8080/api/v1/users/change-password', {
+      const response = await axios.patch(`${process.env.changePassURL}`, {
         currentPassword,
         newPassword,
         confirmationPassword

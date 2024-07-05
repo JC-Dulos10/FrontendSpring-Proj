@@ -33,7 +33,7 @@ const DashboardPage = () => {
       const fetchData = async () => {
         try {
           // Make GET request to fetch user data
-          const response = await axios.get('http://localhost:8080/api/v1/users', config);
+          const response = await axios.get(`${process.env.getUserURL}`, config);
           if (response.status === 200) {
             setIsAdmin(true); // User is admin
             localStorage.setItem('isAdmin', isAdmin.toString());
@@ -80,6 +80,7 @@ const DashboardPage = () => {
   };
 
   const handleCloseRegisterModal = () => {
+    window.location.reload();
     setIsRegisterModalOpen(false);
   };
 
@@ -97,7 +98,7 @@ const DashboardPage = () => {
           Authorization: `Bearer ${token}`,
         },
       };
-      await axios.delete(`http://localhost:8080/api/v1/users/${id}`, config);
+      await axios.delete(`${process.env.getUserURL}/${id}`, config);
       setUsers(users.filter(user => user.id !== id)); // Remove deleted user from state
     } catch (error) {
       console.error('Error deleting user:', error);

@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 import RegisterModal from '@/components/RegisterModal';
 
 const LoginPage = () => {
@@ -15,7 +14,7 @@ const LoginPage = () => {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const res = await fetch('http://localhost:8080/api/v1/auth/authenticate', {
+    const res = await fetch(`${process.env.authURL}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

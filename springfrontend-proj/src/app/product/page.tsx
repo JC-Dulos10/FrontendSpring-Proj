@@ -36,7 +36,7 @@ const ProductPage = () => {
 
       const fetchProducts = async () => {
         try {
-          const response = await axios.get('http://localhost:8080/api/v1/products', config);
+          const response = await axios.get(`${process.env.productURL}`, config);
           if (response.status === 200) {
             setProducts(response.data);
           }
@@ -68,7 +68,7 @@ const ProductPage = () => {
           Authorization: `Bearer ${token}`,
         },
       };
-      await axios.delete(`http://localhost:8080/api/v1/products/${id}`, config);
+      await axios.delete(`${process.env.productURL}/${id}`, config);
       setProducts(products.filter(product => product.productId !== id));
     } catch (error) {
       console.error('Error deleting product:', error);

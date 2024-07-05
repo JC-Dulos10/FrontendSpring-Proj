@@ -25,7 +25,7 @@ const UpdateProductModal: React.FC<UpdateProductModalProps> = ({ isOpen, onClose
 
       const fetchProduct = async () => {
         try {
-          const response = await axios.get(`http://localhost:8080/api/v1/products/${productId}`, config);
+          const response = await axios.get(`${process.env.productURL}/${productId}`, config);
           const product = response.data;
           setProductName(product.productName);
           setProductPrice(product.productPrice);
@@ -47,7 +47,7 @@ const UpdateProductModal: React.FC<UpdateProductModalProps> = ({ isOpen, onClose
 
     try {
       await axios.put(
-        `http://localhost:8080/api/v1/products/${productId}`,
+        `${process.env.productURL}/${productId}`,
         { productName, productPrice },
         config
       );
