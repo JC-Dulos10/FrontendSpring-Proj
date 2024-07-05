@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios, { AxiosError } from 'axios';
-import { request } from 'http';
 import UserTable from '@/components/UserTable';
 import ChangePasswordModal from '@/components/ChangePasswordModal';
 import RegisterModal from '@/components/RegisterModal';
@@ -37,6 +36,7 @@ const DashboardPage = () => {
           const response = await axios.get('http://localhost:8080/api/v1/users', config);
           if (response.status === 200) {
             setIsAdmin(true); // User is admin
+            localStorage.setItem('isAdmin', isAdmin.toString());
             setUsers(response.data);
           } else {
             setIsAdmin(false); // Assume user is not admin for any other status
@@ -47,7 +47,7 @@ const DashboardPage = () => {
             if (axiosError.response.status === 403) {
               setIsAdmin(false); // User is not admin (403 Forbidden)
             } else {
-              console.error('Error fetching user data:', axiosError, request);
+              console.error('Error fetching user data:', axiosError);
             }
           } else if (axiosError.request) {
             console.error('Request error:', axiosError.request);
@@ -60,7 +60,7 @@ const DashboardPage = () => {
       };
       fetchData();
     }
-  }, [router]);
+  }, [isAdmin, router]);
 
   if (!isAuthenticated) {
     // Return null or a loading indicator if not authenticated (optional)
@@ -104,6 +104,10 @@ const DashboardPage = () => {
     }
   };
 
+  const handleGoToProductPage = () => {
+    router.push(`/product`);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 py-6 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -138,6 +142,12 @@ const DashboardPage = () => {
                   >
                     Logout
                   </button>
+                  <button
+                    onClick={handleGoToProductPage}
+                    className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+                  >
+                    Product Inventory
+                  </button>
                   <a href='/dashboard'>
                     <button
                       className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700"
@@ -152,18 +162,24 @@ const DashboardPage = () => {
           {!isAdmin && (
             <div className="mt-6 flex space-x-4">
              <button
-                    onClick={handleOpenChangePasswordModal}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                onClick={handleOpenChangePasswordModal}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                Change Password
+              </button>
+              <button
+                    onClick={handleGoToProductPage}
+                    className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
                   >
-                    Change Password
+                    Product Inventory
                   </button>
-                  <button
-                    onClick={handleLogout}
-                    className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-                  >
-                    Logout
-                  </button>
-              </div>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+              >
+                Logout
+              </button>
+            </div>
           )}
           <ChangePasswordModal isOpen={isChangePasswordModalOpen} onClose={handleCloseChangePasswordModal} />
           <RegisterModal isOpen={isRegisterModalOpen} onClose={handleCloseRegisterModal} isAdmin={true} />
