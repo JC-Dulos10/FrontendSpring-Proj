@@ -1,5 +1,5 @@
 'use client';
-// Import necessary modules
+
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios, { AxiosError } from 'axios';
@@ -9,79 +9,55 @@ import RegisterModal from '@/components/RegisterModal';
 
 const DashboardPage = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const router = useRouter();
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true); // Loading state
-  const [users, setUsers] = useState<any[]>([]); // State
-  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState<boolean>(false); // Change Password Modal state
-  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState<boolean>(false); // Register Modal state
+  const [loading, setLoading] = useState<boolean>(true);
+  const [users, setUsers] = useState<any[]>([]);
+  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState<boolean>(false);
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState<boolean>(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
 
     if (!token) {
-      router.push('/login'); // Redirect to login page if token is not present
-    } else {
-      // Optionally, you can verify the token here
-      setIsAuthenticated(true);
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`, // JWT token in Authorization header
-        },
-      };
-
-      const fetchData = async () => {
-        try {
-          // Make GET request to fetch user data
-          const response = await axios.get(`${process.env.getUserURL}`, config);
-          if (response.status === 200) {
-            setIsAdmin(true); // User is admin
-            localStorage.setItem('isAdmin', isAdmin.toString());
-            setUsers(response.data);
-          } else {
-            setIsAdmin(false); // Assume user is not admin for any other status
-          }
-        } catch (error) {
-          const axiosError = error as AxiosError;
-          if (axiosError.response) {
-            if (axiosError.response.status === 403) {
-              setIsAdmin(false); // User is not admin (403 Forbidden)
-            } else {
-              console.error('Error fetching user data:', axiosError);
-            }
-          } else if (axiosError.request) {
-            console.error('Request error:', axiosError.request);
-          } else {
-            console.error('Error:', axiosError.message);
-          }
-        } finally {
-          setLoading(false); // Set loading state to false after fetching data
-        }
-      };
-      fetchData();
+      router.push('/login');
+      return;
     }
-  }, [isAdmin, router]);
 
-  if (!isAuthenticated) {
-    // Return null or a loading indicator if not authenticated (optional)
-    return null;
-  }
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
 
-  const handleOpenChangePasswordModal = () => {
-    setIsChangePasswordModalOpen(true);
-  };
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${process.env.getUserURL}`, config);
+        setIsAdmin(true);
+        setUsers(response.data);
+      } catch (error) {
+        handleFetchError(error);
+      } finally {
+        setIsAuthenticated(true);
+        setLoading(false);
+      }
+    };
 
-  const handleCloseChangePasswordModal = () => {
-    setIsChangePasswordModalOpen(false);
-  };
+    fetchData();
+  }, [router]);
 
-  const handleOpenRegisterModal = () => {
-    setIsRegisterModalOpen(true);
-  };
-
-  const handleCloseRegisterModal = () => {
-    window.location.reload();
-    setIsRegisterModalOpen(false);
+  const handleFetchError = (error: unknown) => {
+    const axiosError = error as AxiosError;
+    if (axiosError.response) {
+      if (axiosError.response.status === 403) {
+        setIsAdmin(false); // User not an admin
+      } else {
+        console.error('Error fetching user data:', axiosError.response.data);
+      }
+    } else {
+      console.error('Unknown error:', axiosError.message);
+    }
   };
 
   const handleLogout = () => {
@@ -93,21 +69,78 @@ const DashboardPage = () => {
   const handleDeleteUser = async (id: number) => {
     try {
       const token = localStorage.getItem('token');
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-      await axios.delete(`${process.env.getUserURL}/${id}`, config);
-      setUsers(users.filter(user => user.id !== id)); // Remove deleted user from state
+      await axios.delete(`${process.env.getUserURL}/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUsers(users.filter(user => user.id !== id));
     } catch (error) {
       console.error('Error deleting user:', error);
     }
   };
 
-  const handleGoToProductPage = () => {
-    router.push(`/product`);
-  };
+  const handleModalClose = () => window.location.reload();
+
+  const handleNavigation = (path: string) => router.push(path);
+
+  const renderAdminControls = () => (
+    <div className="mt-6 flex space-x-4">
+      <button
+        onClick={() => setIsChangePasswordModalOpen(true)}
+        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+      >
+        Change Password
+      </button>
+      <button
+        onClick={() => setIsRegisterModalOpen(true)}
+        className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+      >
+        Register Admin
+      </button>
+      <button
+        onClick={handleLogout}
+        className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+      >
+        Logout
+      </button>
+      <button
+        onClick={() => handleNavigation('/product')}
+        className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+      >
+        Product Inventory
+      </button>
+      <button
+        onClick={() => handleNavigation('/dashboard')}
+        className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700"
+      >
+        Refresh
+      </button>
+    </div>
+  );
+
+  const renderUserControls = () => (
+    <div className="mt-6 flex space-x-4">
+      <button
+        onClick={() => setIsChangePasswordModalOpen(true)}
+        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+      >
+        Change Password
+      </button>
+      <button
+        onClick={() => handleNavigation('/product')}
+        className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+      >
+        Product Inventory
+      </button>
+      <button
+        onClick={handleLogout}
+        className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+      >
+        Logout
+      </button>
+    </div>
+  );
+
+  if (!isAuthenticated) return null; // Optional: Add a loader or message
 
   return (
     <div className="min-h-screen bg-gray-100 py-6 sm:px-6 lg:px-8">
@@ -116,76 +149,29 @@ const DashboardPage = () => {
           <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
           <p className="mt-2 text-gray-600">Welcome to the dashboard!</p>
           <p className="mt-4 text-sm text-gray-500">
-            This project is created as a demo to showcase the functionality of a backend server created using Java Spring Boot
-            and a frontend using Next.js.
+            This project demonstrates a backend powered by Java Spring Boot and a frontend using Next.js.
           </p>
+
           {loading ? (
             <p className="mt-4 text-gray-500">Loading...</p>
           ) : (
-            <>
-              {isAdmin && (
-                <div className="mt-6 flex space-x-4">
-                  <button
-                    onClick={handleOpenChangePasswordModal}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                  >
-                    Change Password
-                  </button>
-                  <button
-                    onClick={handleOpenRegisterModal}
-                    className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
-                  >
-                    Register Admin
-                  </button>
-                  <button
-                    onClick={handleLogout}
-                    className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-                  >
-                    Logout
-                  </button>
-                  <button
-                    onClick={handleGoToProductPage}
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-                  >
-                    Product Inventory
-                  </button>
-                  <a href='/dashboard'>
-                    <button
-                      className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700"
-                    >
-                      Refresh
-                    </button>
-                  </a>
-                </div>
-              )}
-            </>
+            isAdmin ? renderAdminControls() : renderUserControls()
           )}
-          {!isAdmin && (
-            <div className="mt-6 flex space-x-4">
-             <button
-                onClick={handleOpenChangePasswordModal}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-              >
-                Change Password
-              </button>
-              <button
-                    onClick={handleGoToProductPage}
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-                  >
-                    Product Inventory
-                  </button>
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-              >
-                Logout
-              </button>
-            </div>
-          )}
-          <ChangePasswordModal isOpen={isChangePasswordModalOpen} onClose={handleCloseChangePasswordModal} />
-          <RegisterModal isOpen={isRegisterModalOpen} onClose={handleCloseRegisterModal} isAdmin={true} />
+
+          <ChangePasswordModal
+            isOpen={isChangePasswordModalOpen}
+            onClose={() => setIsChangePasswordModalOpen(false)}
+          />
+          <RegisterModal
+            isOpen={isRegisterModalOpen}
+            onClose={handleModalClose}
+            isAdmin={true}
+          />
         </div>
-        {isAdmin && <UserTable users={users} onDelete={handleDeleteUser} />} {/* Display the UserTable only if the user is an admin */}
+
+        {isAdmin && (
+          <UserTable users={users} onDelete={handleDeleteUser} />
+        )}
       </div>
     </div>
   );

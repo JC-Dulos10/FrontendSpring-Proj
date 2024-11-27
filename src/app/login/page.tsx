@@ -7,54 +7,53 @@ import RegisterModal from '@/components/RegisterModal';
 const LoginPage = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [error, setError] = useState<string>(''); // State for error message
+  const [error, setError] = useState<string>(''); 
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState<boolean>(false);
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log(`URL: ${process.env.authURL}`);
+    try {
+      const res = await fetch(`${process.env.authURL}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const res = await fetch(`${process.env.authURL}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      // Save the JWT token in localStorage
-      localStorage.setItem('token', data.token);
-      // Redirect to another page on successful login
-      router.push('/dashboard');
-    } else {
-      // Handle error response (text or JSON)
-      const contentType = res.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
-        // If response is JSON
-        const jsonError = await res.json();
-        setError(jsonError.message || 'Failed login');
+      if (res.ok) {
+        const data = await res.json();
+        // Save the JWT token and isAdmin status in localStorage
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('admin', data.isAdmin); // Store isAdmin status
+        router.push('/dashboard');
       } else {
-        // If response is plain text
-        const textError = await res.text();
-        setError(textError || 'Failed login');
+        const contentType = res.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const jsonError = await res.json();
+          setError(jsonError.message || 'Failed login');
+        } else {
+          const textError = await res.text();
+          setError(textError || 'Failed login');
+        }
       }
+    } catch (error) {
+      console.error('Login error:', error);
+      setError('An unexpected error occurred.');
     }
   };
 
-  const openRegisterModal = () => {
-    setIsRegisterModalOpen(true);
-  };
-
-  const closeRegisterModal = () => {
-    setIsRegisterModalOpen(false);
-  };
+  const openRegisterModal = () => setIsRegisterModalOpen(true);
+  const closeRegisterModal = () => setIsRegisterModalOpen(false);
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          Sign in to your account
+        </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
           Or{' '}
           <button
@@ -65,10 +64,9 @@ const LoginPage = () => {
           </button>
         </p>
       </div>
-
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          {error && <p className="mb-4 text-center text-red-500">{error}</p>} {/* Display error message */}
+          {error && <p className="mb-4 text-center text-red-500">{error}</p>}
           <form className="space-y-6" onSubmit={handleLogin}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -87,7 +85,6 @@ const LoginPage = () => {
                 />
               </div>
             </div>
-
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Password
@@ -105,7 +102,6 @@ const LoginPage = () => {
                 />
               </div>
             </div>
-
             <div>
               <button
                 type="submit"
