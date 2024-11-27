@@ -21,7 +21,7 @@ const ProductPage = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const adminParam = parseBoolean(localStorage.getItem('isAdmin') || 'false');
+    const adminParam = parseBoolean(localStorage.getItem('admin') || 'false');
 
     if (!token) {
       router.push('/login');

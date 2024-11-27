@@ -21,7 +21,7 @@ const nextConfig = {
         baseURL: 'https://springbackend-proj.onrender.com/api/v1/',
         registerURL: 'https://springbackend-proj.onrender.com/api/v1/auth/register',
         authURL: 'https://springbackend-proj.onrender.com/api/v1/auth/authenticate',
-        getUserURL: 'https://springbackend-proj.onrender.comapi/v1/users',
+        getUserURL: 'https://springbackend-proj.onrender.com/api/v1/users',
         changePassURL: 'https://springbackend-proj.onrender.com/api/v1/users/change-password',
         productURL: 'https://springbackend-proj.onrender.com/api/v1/products',
 

@@ -27,7 +27,8 @@ const LoginPage = () => {
         const data = await res.json();
         // Save the JWT token and isAdmin status in localStorage
         localStorage.setItem('token', data.token);
-        localStorage.setItem('admin', data.isAdmin); // Store isAdmin status
+        console.log(`isAdmin login-page: ${data.admin}`)
+        localStorage.setItem('admin', data.admin.toString()); // Store isAdmin status
         router.push('/dashboard');
       } else {
         const contentType = res.headers.get('content-type');

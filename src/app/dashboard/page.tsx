@@ -19,6 +19,14 @@ const DashboardPage = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
+    const admin = localStorage.getItem('admin');
+    console.log(`admin dashboard: ${admin}`);
+
+    if(admin === "true"){
+      setIsAdmin(true);
+    }
+
+    console.log(`isAdmin dashboard: ${isAdmin}`);
 
     if (!token) {
       router.push('/login');
@@ -34,7 +42,6 @@ const DashboardPage = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`${process.env.getUserURL}`, config);
-        setIsAdmin(true);
         setUsers(response.data);
       } catch (error) {
         handleFetchError(error);
@@ -141,6 +148,8 @@ const DashboardPage = () => {
   );
 
   if (!isAuthenticated) return null; // Optional: Add a loader or message
+
+  console.log(`isAdmin: ${localStorage.getItem('admin')}`);
 
   return (
     <div className="min-h-screen bg-gray-100 py-6 sm:px-6 lg:px-8">
