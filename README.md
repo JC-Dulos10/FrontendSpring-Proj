@@ -73,37 +73,6 @@ This frontend is deployed on **Vercel**, providing high availability and fast pe
 
 ---
 
-### **🛠️ Setup & Development (Local)**
-While the app is deployed on Vercel, if you want to run it locally, follow these steps:
-
-1. **Clone the Repository:**
-   ```bash
-   git clone https://github.com/your-username/FrontendSpring-Proj.git
-   cd FrontendSpring-Proj
-   ```
-
-2. **Install Dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Configure the Backend API URL**:
-   In the `.env.local` file, add the following environment variable to point to your backend API:
-
-   ```
-   NEXT_PUBLIC_API_URL=https://springbackend-proj.onrender.com
-   ```
-
-4. **Run the Development Server:**
-   ```bash
-   npm run dev
-   ```
-
-5. **Access the App**:  
-   Visit `http://localhost:3000` in your browser.
-
----
-
 ### **📱 UI Demo**
 - **Login Page**: A simple form to log in or register.
 - **Dashboard**: Once logged in, users will be redirected to the dashboard, where they can see products and manage them if they're an admin.
@@ -118,12 +87,6 @@ While the app is deployed on Vercel, if you want to run it locally, follow these
 
 2. **Authentication Issues**:  
    If you're facing issues with authentication, ensure that your JWT token is correctly stored (in cookies or localStorage) and that it's included in the headers for protected API calls.
-
----
-
-### **🎨 UI Preview**
-
-![UI Preview](https://yourimageurl.com/ui-preview.png)
 
 ---
 
