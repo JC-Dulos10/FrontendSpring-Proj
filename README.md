@@ -1,36 +1,139 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🌟 **FrontendSpring-Proj** 🌟
 
-## Getting Started
+Welcome to the **FrontendSpring-Proj**, the frontend application that seamlessly integrates with the **Spring Boot Backend API**. This app is built using **Next.js** and **Tailwind CSS** for a responsive and modern user interface.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### **📝 Project Overview**
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This project serves as the **frontend** for managing **users** and **products**, with secure authentication and role-based access. It is designed with an emphasis on usability and security, leveraging **JWT** for authentication and **Tailwind CSS** for a sleek, modern UI.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### **🚀 Deployment**
 
-## Learn More
+**Frontend URL**:  
+[FrontendSpring-Proj on Vercel](https://frontend-spring-proj.vercel.app/)
 
-To learn more about Next.js, take a look at the following resources:
+This frontend is deployed on **Vercel**, providing high availability and fast performance globally. It integrates with the **Spring Boot Backend API** hosted on Render, providing a complete full-stack solution.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### **⚡ Features**
+- **User Authentication**: Register, login, and manage user sessions securely with **JWT tokens**.
+- **Role-based Access**: Different functionality for **Admin** and **regular users**.
+- **Product Management**: Create, read, and update products (admin-only actions for create and update).
+- **Responsive UI**: Built with **Next.js** and **Tailwind CSS** for fast, mobile-friendly user interfaces.
+- **State Management**: Uses **React Context API** to handle authentication states and user sessions.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### **🖥️ How It Works**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+1. **User Authentication:**
+   - Users can log in or register. Once authenticated, a JWT token is stored locally (in cookies or localStorage) for session management.
+   - **Admin users** can perform actions like adding or updating products, while **regular users** can only view products.
+
+2. **Product Management:**
+   - The Admin user can create new products, update existing products, and delete them. Regular users can only **view** products.
+
+---
+
+### **🔧 Technologies Used**
+
+- **Next.js**: A React framework for server-side rendering and static site generation.
+- **Tailwind CSS**: A utility-first CSS framework to design responsive and modern UIs.
+- **Axios**: For making HTTP requests to the backend API.
+- **JWT (JSON Web Tokens)**: For securing the communication between frontend and backend.
+- **React Context API**: To manage and share user authentication state across components.
+
+---
+
+### **📦 How to Test the Frontend**
+
+1. **✨ Visit the Deployed App:**
+   You can directly test the app at [FrontendSpring-Proj on Vercel](https://frontend-spring-proj.vercel.app/).
+
+2. **🛠️ Testing Authentication:**
+   - **Register a User**: Visit the `Register` page and enter the user details. Upon successful registration, you will be logged in.
+   - **Login as Admin**: Use the credentials for an **admin user** (you can set `isAdmin: true` in the backend to create an admin).
+   - **Login as Regular User**: Use the credentials for a **non-admin user** (set `isAdmin: false`).
+
+3. **🔐 Role-based Access:**
+   - Only an **Admin** user can access product management features (create, update, delete).
+   - Regular users can only **view** products.
+
+---
+
+### **💡 Key Points to Remember**
+
+- **JWT Token**: This app relies on **JWT** for authentication, and the token is required for accessing protected routes.
+- **Admin Access**: Only admin users can manage (create, update, delete) products. Regular users are only able to view products.
+- **State Management**: The app uses **React Context** to maintain the authentication state. Tokens are stored in the browser for subsequent requests.
+
+---
+
+### **🛠️ Setup & Development (Local)**
+While the app is deployed on Vercel, if you want to run it locally, follow these steps:
+
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/your-username/FrontendSpring-Proj.git
+   cd FrontendSpring-Proj
+   ```
+
+2. **Install Dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Configure the Backend API URL**:
+   In the `.env.local` file, add the following environment variable to point to your backend API:
+
+   ```
+   NEXT_PUBLIC_API_URL=https://springbackend-proj.onrender.com
+   ```
+
+4. **Run the Development Server:**
+   ```bash
+   npm run dev
+   ```
+
+5. **Access the App**:  
+   Visit `http://localhost:3000` in your browser.
+
+---
+
+### **📱 UI Demo**
+- **Login Page**: A simple form to log in or register.
+- **Dashboard**: Once logged in, users will be redirected to the dashboard, where they can see products and manage them if they're an admin.
+- **Responsive Design**: The app is fully responsive, ensuring that it works seamlessly across desktop, tablet, and mobile devices.
+
+---
+
+### **❗ Troubleshooting**
+
+1. **First-Time Load**:  
+   As the app is deployed on Vercel’s free tier, the backend might take a few seconds to load if it hasn't been accessed recently. Please be patient during the first request.
+
+2. **Authentication Issues**:  
+   If you're facing issues with authentication, ensure that your JWT token is correctly stored (in cookies or localStorage) and that it's included in the headers for protected API calls.
+
+---
+
+### **🎨 UI Preview**
+
+![UI Preview](https://yourimageurl.com/ui-preview.png)
+
+---
+
+### **🙌 Contributions**
+Feel free to contribute by submitting issues or pull requests! I am always open to suggestions and improvements.
+
+---
+
+### **📜 License**
+This project is open source and available under the [MIT License](LICENSE).
+
+---
+
