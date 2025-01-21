@@ -52,7 +52,7 @@ const DashboardPage = () => {
     };
 
     fetchData();
-  }, [router]);
+  }, [isAdmin, router]);
 
   const handleFetchError = (error: unknown) => {
     const axiosError = error as AxiosError;
@@ -73,51 +73,65 @@ const DashboardPage = () => {
     router.push('/login');
   };
 
+
   const handleDeleteUser = async (id: number) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`${process.env.getUserURL}/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
+      if (!token) {
+        throw new Error('Token is missing. Please log in again.');
+      }
+  
+      await axios.put(`${process.env.getUserURL}/${id}/status?status=inactive`, null, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
+  
+      // Update the local state to remove the user
       setUsers(users.filter(user => user.id !== id));
-    } catch (error) {
-      console.error('Error deleting user:', error);
+      console.log("User marked as inactive");
+    } catch (error: any) {
+      if (error.response?.status === 403) {
+        console.error('Authorization error: You do not have permission to perform this action.');
+      } else {
+        console.error('Error marking user as inactive:', error);
+      }
     }
   };
-
+  
   const handleModalClose = () => window.location.reload();
 
   const handleNavigation = (path: string) => router.push(path);
 
   const renderAdminControls = () => (
-    <div className="mt-6 flex space-x-4">
+    <div className="mt-6 flex flex-wrap gap-4 sm:space-x-4">
       <button
         onClick={() => setIsChangePasswordModalOpen(true)}
-        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+        className="w-full xs:w-auto px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
       >
         Change Password
       </button>
       <button
         onClick={() => setIsRegisterModalOpen(true)}
-        className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+        className="w-full xs:w-auto px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
       >
         Register Admin
       </button>
       <button
         onClick={handleLogout}
-        className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+        className="w-full xs:w-auto px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
       >
         Logout
       </button>
       <button
         onClick={() => handleNavigation('/product')}
-        className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+        className="w-full xs:w-auto px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
       >
         Product Inventory
       </button>
       <button
         onClick={() => handleNavigation('/dashboard')}
-        className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700"
+        className="w-full xs:w-auto px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700"
       >
         Refresh
       </button>
@@ -125,22 +139,22 @@ const DashboardPage = () => {
   );
 
   const renderUserControls = () => (
-    <div className="mt-6 flex space-x-4">
+    <div className="mt-6 flex flex-wrap gap-4 sm:space-x-4">
       <button
         onClick={() => setIsChangePasswordModalOpen(true)}
-        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+        className="w-full xs:w-auto px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
       >
         Change Password
       </button>
       <button
         onClick={() => handleNavigation('/product')}
-        className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+        className="w-full xs:w-auto px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
       >
         Product Inventory
       </button>
       <button
         onClick={handleLogout}
-        className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+        className="w-full xs:w-auto px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
       >
         Logout
       </button>
@@ -155,9 +169,9 @@ const DashboardPage = () => {
     <div className="min-h-screen bg-gray-100 py-6 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="py-6">
-          <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
-          <p className="mt-2 text-gray-600">Welcome to the dashboard!</p>
-          <p className="mt-4 text-sm text-gray-500">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Dashboard</h1>
+          <p className="mt-2 text-sm sm:text-base text-gray-600">Welcome to the dashboard!</p>
+          <p className="mt-4 text-xs sm:text-sm text-gray-500">
             This project demonstrates a backend powered by Java Spring Boot and a frontend using Next.js.
           </p>
 

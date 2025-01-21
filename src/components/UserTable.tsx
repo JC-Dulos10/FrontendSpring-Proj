@@ -6,6 +6,7 @@ interface User {
   lastname: string;
   email: string;
   role: string;
+  status: string;
 }
 
 interface Props {
@@ -35,6 +36,9 @@ const UserTable: React.FC<Props> = ({ users, onDelete }) => {
               Role
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Status
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Actions
             </th>
           </tr>
@@ -57,13 +61,18 @@ const UserTable: React.FC<Props> = ({ users, onDelete }) => {
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {user.role}
               </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {user.status}
+              </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <button
-                  onClick={() => onDelete(user.id)}
-                  className="px-2 py-1 bg-red-600 text-white rounded-md hover:bg-red-700"
-                >
-                  Delete
-                </button>
+                {user.status === 'ACTIVE' && (
+                  <button
+                    onClick={() => onDelete(user.id)}
+                    className="px-2 py-1 bg-red-600 text-white rounded-md hover:bg-red-700"
+                  >
+                    Delete
+                  </button>
+                )}
               </td>
             </tr>
           ))}

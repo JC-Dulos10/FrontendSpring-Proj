@@ -1,5 +1,3 @@
-// app/products/page.tsx
-
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -86,56 +84,54 @@ const ProductPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-6 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-100 py-6 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
         <div className="py-6">
-          <h1 className="text-3xl font-bold text-gray-800">Product Inventory</h1>
-          <p className="mt-4 text-lg text-gray-600">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Product Inventory</h1>
+          <p className="mt-4 text-sm sm:text-base lg:text-lg text-gray-600">
             Welcome to the product inventory page. Here you can manage and view all your products.
           </p>
-          <p className="mt-4 mb-6 text-sm text-gray-500">
+          <p className="mt-4 mb-6 text-xs sm:text-sm lg:text-base text-gray-500">
             This page is a simple demo to showcase how you can create a product inventory page using Next.js.
           </p>
           {loading ? (
             <p className="mt-4 text-gray-500">Loading...</p>
           ) : (
-            <>
-              <ProductTable products={products} isAdmin={isAdmin} onDelete={handleDeleteProduct} />
-            </>
+            <ProductTable products={products} isAdmin={isAdmin} onDelete={handleDeleteProduct} />
           )}
         </div>
-        <div className="mt-3 flex space-x-4">
+        <div className="mt-3 flex flex-wrap gap-3">
           {isAdmin && (
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+              className="w-full xxs:w-auto px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
             >
               Create Product
             </button>
           )}
           <button
             onClick={handleLogout}
-            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+            className="w-full xxs:w-auto px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
           >
             Logout
           </button>
-          <a href='/product'>
-            <button className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700">
+          <a href="/product" className='w-full xxs:w-auto'>
+            <button className="w-full xxs:w-auto px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700">
               Refresh
             </button>
           </a>
-          <a href='/dashboard'>
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-red-700">
+          <a href="/dashboard" className='w-full xxs:w-auto'>
+            <button className="w-full xxs:w-auto px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
               Back
             </button>
           </a>
-          <CreateProductModal
-            isOpen={isCreateModalOpen}
-            onCreateSuccess={handleCreateProduct}
-            onClose={() => setIsCreateModalOpen(false)}
-          />
         </div>
       </div>
+      <CreateProductModal
+        isOpen={isCreateModalOpen}
+        onCreateSuccess={handleCreateProduct}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
     </div>
   );
 };
